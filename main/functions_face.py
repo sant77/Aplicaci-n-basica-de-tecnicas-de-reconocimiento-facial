@@ -6,7 +6,9 @@ import os
 import glob
 import cv2
 import pathlib
-
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.naive_bayes import GaussianNB
 
 def extract_data(path, file_type="*.jpg",Resize=True):
     
@@ -76,7 +78,7 @@ def getHistogram(imgArray):
     hist, bin_edges = np.histogram(imgArray, density=True)
     return hist
 
-def trainModel():
+def trainModel(model="knn"):
 
     path = str(pathlib.Path(__file__).parent.absolute())
 
@@ -125,12 +127,30 @@ def trainModel():
 
     #print(lbp_feactures)
 
-    clf_lbp_Kn_3 = KNeighborsClassifier(n_neighbors=3)
-    clf_lbp_Kn_3 = clf_lbp_Kn_3.fit(lbp_hist,y_train)
+    if model == "knn":
+        clf_lbp_Kn_3 = KNeighborsClassifier(n_neighbors=3)
+        clf_lbp_Kn_3 = clf_lbp_Kn_3.fit(lbp_hist,y_train)
 
-    #y_pred_lbp_knn = clf_lbp_Kn_3.predict(lbp_hist_test)
+        return clf_lbp_Kn_3
+    
+    elif model == "svm":
+        param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
+        'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
 
-    return clf_lbp_Kn_3
+        clf_lbp_svm = GridSearchCV(
+            SVC(kernel='rbf', class_weight='balanced'), param_grid)
+        
+        clf_lbp_svm = clf_lbp_svm.fit(lbp_hist,y_train )
+
+        return clf_lbp_svm
+
+    elif model == "gauss":
+        clf_lbp_Gauss = GaussianNB()
+        clf_lbp_Gauss = clf_lbp_Gauss.fit(lbp_hist,y_train)
+
+        return clf_lbp_Gauss
+    else:
+        return "Modelo incorrecto seleccionado"
 
 def lbpImage(img):
 
