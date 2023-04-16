@@ -15,7 +15,7 @@ import os
 import errno
 import functions_face as ff
 from tkinter import messagebox
-
+import time
 
 # Se localiza el path donde esta el archivo
 
@@ -63,7 +63,7 @@ def visualizar():
             if train == True:
 
                 # Si se detecta alguna cara
-
+                
                 if len(faces) != 0  :
                     for (x,y,w,h) in faces:
                         #cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
@@ -132,8 +132,10 @@ def save_input():
         crearDirectorio(input_text)
         cap = cv2.VideoCapture(0)
 
-        # Se toma 5 fotos en la clasificación
-        while i < 5:
+        messagebox.showinfo("Tomando sus datos", "Por favor mueva su rostro ligeramente de izquierda a derecha")
+        # Se toma 20 fotos en la clasificación
+        time.sleep(0.2)
+        while i < 20:
 
             ret,frame = cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
