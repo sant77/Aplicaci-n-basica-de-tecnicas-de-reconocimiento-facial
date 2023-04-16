@@ -5,7 +5,6 @@ fecha: 22/12/2022
 
 """
 
-
 # Importamos librerias
 from tkinter import *
 from PIL import Image, ImageTk
@@ -16,7 +15,7 @@ import os
 import errno
 import functions_face as ff
 from tkinter import messagebox
-from sklearn.neighbors import KNeighborsClassifier
+import time
 
 # Se localiza el path donde esta el archivo
 
@@ -64,7 +63,7 @@ def visualizar():
             if train == True:
 
                 # Si se detecta alguna cara
-
+                
                 if len(faces) != 0  :
                     for (x,y,w,h) in faces:
                         #cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
@@ -75,11 +74,12 @@ def visualizar():
 
                     # aplicar LBP
                     lbp_hist_test = ff.lbpImage(imageOut)
+                    
                     # Aplicar el clasificador
-                    y_pred_lbp_knn = clf_lbp_Kn_3.predict(lbp_hist_test)
+                    y_pred = model.predict(lbp_hist_test)
 
                     # Colocar el nombre
-                    texto = str(list_people[y_pred_lbp_knn[0]])
+                    texto = str(list_people[y_pred[0]])
             
 
 
@@ -132,8 +132,10 @@ def save_input():
         crearDirectorio(input_text)
         cap = cv2.VideoCapture(0)
 
-        # Se toma 5 fotos en la clasificación
-        while i < 5:
+        messagebox.showinfo("Tomando sus datos", "Por favor mueva su rostro ligeramente de izquierda a derecha")
+        # Se toma 20 fotos en la clasificación
+        time.sleep(0.2)
+        while i < 20:
 
             ret,frame = cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -202,18 +204,36 @@ def crearDirectorio(text):
 
 def entrenarModelo():
 
-    global clf_lbp_Kn_3, train  
+    global train, model
 
     # Entrenar modelo knn
 
-    if selected_option == "LBP + KNN":
+    if selected_option == "LBP + KNN" and len(list_people)>1:
         
-        clf_lbp_Kn_3 = ff.trainModel()
+        model = ff.trainModel()
         
         train = True
         
         messagebox.showinfo("¡Entrenado!", f"Entrenamiento de {selected_option} completado.")
         #print("Entrenado...")
+    
+    elif selected_option == "LBP + SVM" and len(list_people)>1: 
+        model = ff.trainModel("svm")
+        
+        train = True
+        
+        messagebox.showinfo("¡Entrenado!", f"Entrenamiento de {selected_option} completado.")
+
+    elif selected_option == "LBP + Gauss" and len(list_people)>1:
+        
+        model = ff.trainModel("gauss")
+        
+        train = True
+        
+        messagebox.showinfo("¡Entrenado!", f"Entrenamiento de {selected_option} completado.")
+    
+    else:
+        messagebox.showinfo("Error!", "Por favor revise el numero de personas registradas o seleccione un modelo")
 
 # Seleccionar otros modelos...... proximamente
 def on_select(val):
