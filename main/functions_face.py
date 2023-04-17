@@ -10,58 +10,51 @@ from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import GaussianNB
 
-def extract_data(path, file_type="*.jpg",Resize=True):
-    
-    list_people = os.listdir(path)
+def extract_data(path, file_type="*.jpg"):
 
+    list_people = os.listdir(path)
 
     type_file = "*.jpg"
 
-    cont_train = 0
-    cont_train2 = 0
+    cont = 0
+    cont2 = 0
 
     for k in list_people:
-
+        
         path_image = path + "/" + k
         list_jpg = glob.glob(path_image + os.sep + type_file)
+        
+        cont += len(list_jpg)
+        
+    print("El número de muestras: ",cont)
 
-        cont_train += len(list_jpg)
-
-
-    print("El número de muestras para el entrenamiento: ",cont_train)
-
-    #x,y = (cv2.imread(list_jpg[0], cv2.IMREAD_GRAYSCALE)).shape
-
-    #train_data = np.zeros((cont_train,x,y))
-    train_data = np.zeros((cont_train,192,168))
+    train_data = np.zeros((cont,192,168))
     train_data = train_data.astype('float32')
 
-    y_train = np.zeros(cont_train)
+    y_train = np.zeros(cont)
     y_train = y_train.astype('int8')
 
-    count = 0
+
     for i in list_people:
-
+        
         #print(i)
-
+        
         path_image = path + "/" + i
-
+        
         list_jpg = glob.glob(path_image + os.sep + type_file)
-
+        
         for j in list_jpg:
-
-
+            
             image = cv2.imread(j, cv2.IMREAD_GRAYSCALE)
-            if (Resize == True):
-                #image = cv2.resize(image,(x,y))
-                image = cv2.resize(image,(168,192))
-                
-            train_data[cont_train2] += image 
+            image = cv2.resize(image, (168,192))
+            train_data[cont2] += image 
 
-            y_train[cont_train2] = count
+            cadena = j
+            posicion = i[-1]
+
+            y_train[cont2] = posicion
             #print(y_train[cont2])
-            cont_train2 += 1
-        count += 1
+            cont2 += 1
             
     return train_data, y_train
 
