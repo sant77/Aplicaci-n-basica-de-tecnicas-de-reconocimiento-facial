@@ -31,10 +31,8 @@ def extract_data(path, file_type="*.jpg"):
     train_data = np.zeros((cont,192,168))
     train_data = train_data.astype('float32')
 
-    y_train = np.zeros(cont)
-    y_train = y_train.astype('int8')
-
-
+    y_train = []
+    
     for i in list_people:
         
         #print(i)
@@ -49,10 +47,7 @@ def extract_data(path, file_type="*.jpg"):
             image = cv2.resize(image, (168,192))
             train_data[cont2] += image 
 
-            cadena = j
-            posicion = i[-1]
-
-            y_train[cont2] = posicion
+            y_train.append(i)
             #print(y_train[cont2])
             cont2 += 1
             

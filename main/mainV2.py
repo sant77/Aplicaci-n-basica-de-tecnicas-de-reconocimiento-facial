@@ -79,7 +79,8 @@ def visualizar():
                     y_pred = model.predict(lbp_hist_test)
 
                     # Colocar el nombre
-                    texto = str(list_people[y_pred[0]])
+                    
+                    texto = str(y_pred[0])
             
 
 
@@ -119,6 +120,7 @@ def finalizar():
 
 # Guardar nuevo sujeto
 
+
 def save_input():
     global input_text
     input_text = input_entry.get()
@@ -134,7 +136,7 @@ def save_input():
 
         messagebox.showinfo("Tomando sus datos", "Por favor mueva su rostro ligeramente de izquierda a derecha")
         # Se toma 20 fotos en la clasificación
-        time.sleep(0.2)
+
         while i < 20:
 
             ret,frame = cap.read()
@@ -142,6 +144,7 @@ def save_input():
 
             faces = faceClassif.detectMultiScale(gray, 1.3, 5)
 
+            time.sleep(0.4)
 
             if len(faces) != 0  :
 
@@ -152,6 +155,8 @@ def save_input():
                 cv2.imwrite(pathActual +"/data"+"/"+input_text+"/"+str(i)+".jpg",imageOut)
 
                 i += 1
+
+            
 
             cv2.imshow('frame',frame)
 
